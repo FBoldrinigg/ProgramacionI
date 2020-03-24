@@ -1,0 +1,8 @@
+/bin
+/lib
+/share
+/lib64
+/inluce
+.env
+pyvenv.cfg
+**/__pycache__
