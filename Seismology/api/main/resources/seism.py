@@ -15,6 +15,7 @@ UNVERIFIED_SEISMS = {
 
 
 class VerifiedSeism(Resource):
+
     def get(self, id):
         if int(id) in VERIFIED_SEISMS:
             return VERIFIED_SEISMS[int(id)]
@@ -22,25 +23,27 @@ class VerifiedSeism(Resource):
 
 
 class VerifiedSeisms(Resource):
+
     def get(self):
         return VERIFIED_SEISMS
 
 
 class UnverifiedSeism(Resource):
+
     def get(self, id):
-        if int(id) in UNVERIFIED_SEISM:
-            return UNVERIFIED_SEISM[int(id)]
+        if int(id) in UNVERIFIED_SEISMS:
+            return UNVERIFIED_SEISMS[int(id)]
         return 'Unverified seism not found', 404
 
     def delete(self, id):
-        if int(id) in UNVERIFIED_SEISM:
-            del UNVERIFIED_SEISM[int(id)]
+        if int(id) in UNVERIFIED_SEISMS:
+            del UNVERIFIED_SEISMS[int(id)]
             return 'Unverified seism succesfully deleted', 204
         return 'Unverified seism not found', 404
 
     def put(self, id):
-        if int(id) in UNVERIFIED_SEISM:
-            unvSeism = UNVERIFIED_SEISM[int(id)]
+        if int(id) in UNVERIFIED_SEISMS:
+            unvSeism = UNVERIFIED_SEISMS[int(id)]
             data = request.get_json()
             unvSeism.update(data)
             return unvSeism, 201
@@ -48,5 +51,6 @@ class UnverifiedSeism(Resource):
 
 
 class UnverifiedSeisms(Resource):
+
     def get(self):
         return UNVERIFIED_SEISMS
