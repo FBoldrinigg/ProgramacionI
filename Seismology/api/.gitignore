@@ -6,3 +6,5 @@
 .env
 pyvenv.cfg
 **/__pycache__
+test_sensor.py
+adding_randomized_data.py
