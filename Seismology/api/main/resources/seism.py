@@ -43,10 +43,7 @@ class UnverifiedSeism(Resource):
         seism = db.session.query(SeismModel).get_or_404(id)
         if not seism.verified:
             for key, value in request.get_json().items():
-                if key == 'datetime':
-                    setattr(seism, key, datetime.strptime(value, "%Y-%m-%d %H:%M:%S"))
-                else:
-                    setattr(seism, key, value)
+                setattr(seism, key, value)
             db.session.add(seism)
             db.session.commit()
             return seism.to_json(), 201
