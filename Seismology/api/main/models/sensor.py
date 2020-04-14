@@ -9,6 +9,9 @@ class Sensor(db.Model):
     port = db.Column(db.Integer, nullable = False)
     status = db.Column(db.Boolean, nullable = False)
     active = db.Column(db.Boolean, nullable = False)
+    # userId = db.Column(db.Integer, db.ForeignKey('user.id'))
+    # user = db.relationship('User', back_populates = "sensors", uselist = False, single_parent = True)
+    # seisms = db.relationship('Seism', back_populates = "sensor", cascade = "all, delete-orphan")
 
     def __repr__(self):
         return "<Sensor: %r %r %r >" % (self.name, self.ip, self.port)
