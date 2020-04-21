@@ -35,21 +35,41 @@ class Sensor(Resource):
 class Sensors(Resource):
 
     def get(self):
+        page = 1
+        per_page = 50
         sensors = db.session.query(SensorModel)
         filters = request.get_json().items()
         for key, value in filters:
-            if key == "ip":
-                sensors = sensors.filter(SensorModel.ip == value)
-            if key == "port":
-                sensors = sensors.filter(SensorModel.port == value)
             if key == "active":
                 sensors = sensors.filter(SensorModel.active == value)
             if key == "status":
                 sensors = sensors.filter(SensorModel.status == value)
+            if key == "user":
+                if value:
+                    sensors = sensors.filter(SensorModel.userId != None)
+                else:
+                    sensors = sensor.filter(SensorModel.userId is None)
             if key == "userId":
                 sensors = sensors.filter(SensorModel.userId == value)
-        sensors.all()
-        return jsonify({ 'sensors': [sensor.to_json() for sensor in sensors] })
+            if key =="sort_by":
+                if value == "name":
+                    sensors = sensors.order_by(SensorModel.name)
+                if value == "name.desc":
+                    sensors = sensors.order_by(SensorModel.name.desc())
+                if value == "status":
+                    sensors = sensors.order_by(SensorModel.status)
+                if value == "status.desc":
+                    sensors = sensors.order_by(SensorModel.status.desc())
+                if value == "active":
+                    sensors = sensors.order_by(SensorModel.active)
+                if value == "active.desc":
+                    sensors = sensors.order_by(SensorModel.active.desc())
+            if key == "page":
+                page = value
+            if key == "per_page":
+                per_page = value
+        sensors = sensors.paginate(page, per_page, True, 100)
+        return jsonify({ 'sensors': [sensor.to_json() for sensor in sensors.items] })
 
     def post(self):
         sensor = SensorModel.from_json(request.get_json())
