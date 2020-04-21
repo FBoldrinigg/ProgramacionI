@@ -7,7 +7,7 @@ class User(db.Model):
     email = db.Column(db.String(100), nullable = False)
     password = db.Column(db.String(100), nullable = False)
     admin = db.Column(db.Boolean, nullable = False)
-    # sensors = db.relationship('Sensor', back_populates = "user", passive_deletes="all")
+    sensors = db.relationship('Sensor', back_populates = "user")
 
     def __repr__(self):
         return "<User: %r >" % (self.email)
@@ -15,12 +15,11 @@ class User(db.Model):
     def to_json(self):
         user_json = {
             'id':self.id,
-            'email': str(self.email),
-            'password': str(self.password),
-            'admin': self.admin
+            'email': str(self.email)
         }
         return user_json
 
+    @staticmethod
     def from_json(user_json):
         id = user_json.get('id')
         email = user_json.get('email')

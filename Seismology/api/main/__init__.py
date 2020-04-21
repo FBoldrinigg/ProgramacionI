@@ -15,7 +15,7 @@ def create_app():
 	       os.mknod(os.getenv('SQLALCHEMY_DATABASE_PATH') + os.getenv('SQLALCHEMY_DATABASE_NAME'))
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////' + os.getenv('SQLALCHEMY_DATABASE_PATH') + os.getenv('SQLALCHEMY_DATABASE_NAME')
-    db.init_app(app
+    db.init_app(app)
 
     if 'sqlite' in app.config['SQLALCHEMY_DATABASE_URI']:
         def activatePrimaryKeys(conection, conection_record):
@@ -23,7 +23,7 @@ def create_app():
         with app.app_context():
             from sqlalchemy import event
             event.listen(db.engine, 'connect', activatePrimaryKeys)
-            
+
     import main.resources as resources
     api.add_resource(resources.SensorsResource, '/sensors')
     api.add_resource(resources.SensorResource, '/sensor/<id>')

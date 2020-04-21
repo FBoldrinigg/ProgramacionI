@@ -1,5 +1,7 @@
 from .. import db
-import datetime as dtm
+from datetime import datetime as dtm
+from .sensor import Sensor as SensorModel
+
 
 class Seism(db.Model):
 
@@ -10,6 +12,8 @@ class Seism(db.Model):
     latitude = db.Column(db.String(100), nullable = False)
     longitude = db.Column(db.String(100), nullable = False)
     verified = db.Column(db.Boolean, nullable = False)
+    sensorId = db.Column(db.Integer, db.ForeignKey('sensor.id', ondelete = 'RESTRICT'), nullable = False)
+    sensor = db.relationship('Sensor', back_populates = "seisms", uselist = False, single_parent = True)
 
     @property
     def dt(self):
@@ -24,6 +28,7 @@ class Seism(db.Model):
         return "<Seism: %r %r %r %r >" % (self.depth, self.magnitude, self.latitude, self.longitude)
 
     def to_json(self):
+        sensor = db.session.query(SensorModel).get_or_404(self.sensorId)
         seism_json = {
             'id':self.id,
             'datetime': self._dt.strftime("%Y-%m-%d %H:%M:%S"),
@@ -31,10 +36,12 @@ class Seism(db.Model):
             'magnitude': self.magnitude,
             'latitude': str(self.latitude),
             'longitude': str(self.longitude),
-            'verified': self.verified
+            'verified': self.verified,
+            'sensor': sensor.to_json()
         }
         return seism_json
 
+    @staticmethod
     def from_json(seism_json):
         id = seism_json.get('id')
         dt = dtm.strptime(seism_json.get('datetime'), "%Y-%m-%d %H:%M:%S")
@@ -43,4 +50,5 @@ class Seism(db.Model):
         latitude = seism_json.get('latitude')
         longitude = seism_json.get('longitude')
         verified = seism_json.get('verified')
-        return Seism(id = id, _dt = dt, depth = depth, magnitude = magnitude, latitude =  latitude, longitude = longitude, verified = verified)
+        sensorId = seism_json.get('sensorId')
+        return Seism(id = id, _dt = dt, depth = depth, magnitude = magnitude, latitude =  latitude, longitude = longitude, verified = verified, sensorId = sensorId)
