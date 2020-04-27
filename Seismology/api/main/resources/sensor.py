@@ -48,7 +48,7 @@ class Sensors(Resource):
                 if value:
                     sensors = sensors.filter(SensorModel.userId != None)
                 else:
-                    sensors = sensor.filter(SensorModel.userId is None)
+                    sensors = sensors.filter(SensorModel.userId == None)
             if key == "userId":
                 sensors = sensors.filter(SensorModel.userId == value)
             if key =="sort_by":
