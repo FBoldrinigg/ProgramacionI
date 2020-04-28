@@ -2,6 +2,8 @@ from flask_restful import Resource
 from flask import request, jsonify
 from .. import db
 from main.models import SensorModel
+from main.auth.decorators import admin_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 class Sensor(Resource):
@@ -71,6 +73,7 @@ class Sensors(Resource):
         sensors = sensors.paginate(page, per_page, True, 100)
         return jsonify({ 'sensors': [sensor.to_json() for sensor in sensors.items] })
 
+    @admin_required
     def post(self):
         sensor = SensorModel.from_json(request.get_json())
         try:
