@@ -15,13 +15,3 @@ def login():
         return data, 200
     else:
         return "Incorrect password", 401
-
-@auth.route('/register', methods=['POST'])
-def register():
-    user = UserModel.from_json(request.get_json())
-    if db.session.query(UserModel).filter(UserModel.email == user.email):
-        return 'Email already in use', 409
-    else:
-        db.session.add(user)
-        db.session.comit()
-        return user.to_json(), 201

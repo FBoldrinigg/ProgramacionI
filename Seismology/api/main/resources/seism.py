@@ -4,6 +4,8 @@ from .. import db
 from main.models import SeismModel, SensorModel
 import time
 from random import uniform, random, randint, uniform
+from main.auth.decorators import admin_required
+from flask_jwt_extended import jwt_required, get_jwt_claims, get_jwt_identity
 
 
 class VerifiedSeism(Resource):
@@ -47,6 +49,7 @@ class VerifiedSeisms(Resource):
         seisms = seisms.paginate(page, per_page, True, 10000)
         return jsonify({'Verified-Seisms': [seism.to_json() for seism in seisms.items]})
 
+    @jwt_required
     def post(self):
         sensors = db.session.query(SensorModel).all()
         sensorsId = []
@@ -72,6 +75,7 @@ class VerifiedSeisms(Resource):
 
 class UnverifiedSeism(Resource):
 
+    @jwt_required
     def get(self, id):
         seism = db.session.query(SeismModel).get_or_404(id)
         if not seism.verified:
@@ -79,6 +83,7 @@ class UnverifiedSeism(Resource):
         else:
             return 'Forbidden access', 403
 
+    @jwt_required
     def delete(self, id):
         seism = db.session.query(SeismModel).get_or_404(id)
         if not seism.verified:
@@ -88,6 +93,7 @@ class UnverifiedSeism(Resource):
         else:
             return 'Forbidden access', 403
 
+    @jwt_required
     def put(self, id):
         seism = db.session.query(SeismModel).get_or_404(id)
         if not seism.verified:
@@ -105,11 +111,14 @@ class UnverifiedSeism(Resource):
 
 class UnverifiedSeisms(Resource):
 
+    @jwt_required
     def get(self):
         page =  1
         per_page = 50
         seisms = db.session.query(SeismModel).filter(SeismModel.verified == False)
         filters = request.get_json().items()
+        current_user_id = get_jwt_identity()
+        seisms = seisms.join(SeismModel.sensor).filter(SensorModel.userId == current_user_id)
         for key, value in filters:
             if key == "sensorId":
                 seisms = seisms.filter(SeismModel.sensorId == value)
@@ -125,6 +134,7 @@ class UnverifiedSeisms(Resource):
         seisms = seisms.paginate(page, per_page, True, 50)
         return jsonify({'Unverified-Seisms': [seism.to_json() for seism in seisms.items]})
 
+    @jwt_required
     def post(self):
         sensors = db.session.query(SensorModel).all()
         sensorsId = []

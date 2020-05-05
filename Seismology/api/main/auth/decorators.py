@@ -7,7 +7,6 @@ from functools import wraps
 def admin_required(fn):
     @wraps(fn)
     def wrapper(*args, **kwargs):
-        #probar
         verify_jwt_in_request()
         claims = get_jwt_claims()
         if claims['admin']:
