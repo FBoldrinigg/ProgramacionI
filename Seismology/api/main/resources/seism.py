@@ -49,6 +49,8 @@ class VerifiedSeisms(Resource):
         seisms = seisms.paginate(page, per_page, True, 10000)
         return jsonify({'Verified-Seisms': [seism.to_json() for seism in seisms.items]})
 
+    """
+    # Descomentarla para añadir sismos verificados a la db para testear #
     @jwt_required
     def post(self):
         sensors = db.session.query(SensorModel).all()
@@ -71,7 +73,7 @@ class VerifiedSeisms(Resource):
             return seism.to_json(), 201
         else:
             return "No sensors found, can't create seism", 400
-
+    """
 
 class UnverifiedSeism(Resource):
 

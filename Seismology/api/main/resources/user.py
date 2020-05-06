@@ -36,7 +36,7 @@ class Users(Resource):
         users = db.session.query(UserModel).all()
         return jsonify({'Users': [user.to_json() for user in users]})
 
-    @admin_required
+#    @admin_required
     def post(self):
         user = UserModel.from_json(request.get_json())
         emailInUse = db.session.query(UserModel).filter(UserModel.email == user.email).scalar() is not None

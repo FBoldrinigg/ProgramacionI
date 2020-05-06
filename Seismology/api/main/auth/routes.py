@@ -3,6 +3,7 @@ from .. import db
 from main.models import UserModel, SensorModel
 from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
 from main.mail.functions import sendMail
+from main.auth.decorators import admin_required
 
 
 auth = Blueprint('auth', __name__, url_prefix = '/auth')
@@ -19,6 +20,7 @@ def login():
 
 
 @auth.route('/checksensors', methods = ['GET'])
+@admin_required
 def checkStatus():
     sensors = db.session.query(SensorModel).filter(SensorModel.active == True).filter(SensorModel.status == False).all()
     if sensors:
